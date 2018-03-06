@@ -54,11 +54,15 @@ The Cosmos DB Data Migration tool is an open source solution that imports data t
 While the import tool includes a graphical user interface (dtui.exe), it can also be driven from the command line (dt.exe).  In fact, there is an option to output the associated command after setting up an import through the UI.  Tabular source data (e.g. SQL Server or CSV files) can be transformed such that hierarchical relationships (subdocuments) can be created during import.
 
 The migration tool is open source and can be found on GitHub in [this repository](https://github.com/azure/azure-documentDB-datamigrationtool) 
+An older version of the tool (a pre-compiled exe) can also be downloaden from:
+https://www.microsoft.com/en-us/download/details.aspx?id=46436
+
+
 <a name="import-json"></a>
 ### Import JSON files
 The JSON file source importer option allows you to import one or more single document JSON files or JSON files that each contain an array of JSON documents.  When adding folders that contain JSON files to import, you have the option of recursively searching for files in subfolders.
 1.  Download the JSON sample data: [Products.json](media/Products.json)
-2.	Download the migration tool from the [Microsoft Download Center](http://www.microsoft.com/downloads/details.aspx?FamilyID=cda7703a-2774-4c07-adcc-ad02ddc1a44d).
+2.	Download the migration tool from the [Microsoft Download Center](https://www.microsoft.com/en-us/download/details.aspx?id=46436).
 3.	Extract the migration tool to a directory of your choice.
 4.	Run **Dtui.exe** to open the graphical interface version of the tool
 5.	Once the **Welcome** screen displays, click **next** to proceed.
