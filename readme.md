@@ -104,15 +104,15 @@ The JSON file source importer option allows you to import one or more single doc
 
 
 <a name="run-queries-using-query-explorer"></a>
-##  Run queries using the Cosmos DB Query Explorer
-The Cosmos DB **Query Explorer** enables you to create, edit, and run queries against a Cosmos DB collection. The Query Explorer can be launched from the Azure Portal from any of the Cosmos DB account, database, and collection blades.
+##  Run queries using the Cosmos DB Data Explorer
+The Cosmos DB **Data Explorer** enables you to create, edit, and run queries against a Cosmos DB collection. The Data Explorer can be launched from the Azure Portal from any of the Cosmos DB account, database, and collection blades.
   
-1. Near the bottom of each Cosmos DB blade you can find the **Query Explorer** under the *Collections* group.
-	
-	![Screenshot 013 - Query Explorer][13] 
+1. In each Cosmos DB blade you can find the **Data Explorer**.
 
-2. Select the Database and Collection you created in the previous section.
-    > If you only have a single database and collection they will be selected for you.
+2. Select the Database and Collection you created in the previous section followed by the 'New SQL Query' button.
+    > The 'New SQL Query' button appears when you select the Collection (for instance Products).
+	
+	![Screenshot 013 - Data Explorer][13] 
 
 3. Try running following queries, and examine the query results:
 	
@@ -142,7 +142,7 @@ The Cosmos DB **Query Explorer** enables you to create, edit, and run queries ag
 		WHERE p.ProductNumber = "BK-M38S-42"
 		```
 
-    4. Now try using more [advanced query operators](http://azure.microsoft.com/en-us/documentation/articles/Cosmos DB-sql-query/#in-keyword), such as the `IN` operator.
+    4. Now try using more [advanced query operators](http://azure.microsoft.com/en-us/documentation/articles/DocumentDB-sql-query/#in-keyword), such as the `IN` operator.
 		```SQL
 		SELECT p.id, p.Name
 		FROM Products p
@@ -161,9 +161,10 @@ The Cosmos DB **Query Explorer** enables you to create, edit, and run queries ag
 ![Screenshot 014 - New .NET Core Console App][14]
  
 2. To be able to connect to the Azure Cosmos DB we need the **Microsoft.Azure.Cosmos DB.Core** NuGet package. Therefore follow the next steps
-    1. Right click the project and select 'Manage NuGet Packages in the context menu.
-    2. In the Nuget Explorer switch to the *Browse* tab and search for 'Azure Cosmos DB'
-    3. From the result list select the Cosmos DB library with .NET Core mentioned: **Microsoft.Azure.Cosmos DB.Core**
+    1. Right click the project and select 'Manage NuGet Packages' in the context menu.
+    2. In the Nuget Explorer switch to the *Browse* tab and search for 'Azure Cosmos DB Core'
+    3. From the result list select the Cosmos DB library with .NET Core mentioned: **Microsoft.Azure.DocumentDB.Core**
+	(Microsoft didn't rename the NuGet package from DocumentDb to CosmosDb so this is the one we need.)
     4. Finally click *Install* followed by *Accept* on the several license agreements.
 		![Screenshot 015 - Adding Cosmos DB NuGet pacakge to the .NET Core Console App][15]
 	
@@ -185,13 +186,15 @@ The Cosmos DB **Query Explorer** enables you to create, edit, and run queries ag
         }
 	```
 5. Next create a new public class called **Product** which mimics the object we have in the JSON file.
-6. Withi the Product class create the following five public properties:
+6. Within the Product class create the following 5 public properties:
   	1. Property: **Id**, Type: *String*
     2. Property: **Name**, Type: *String*
     3. Property: **Description**, Type: *String* 
     4. Property: **ProductNumber**, Type: *String*
     5. Property: **Category**, Type: *Category* (the class we created before)
+
 7. Looking at the JSON we can see the Products Id is written with a non-capital 'i'. 
+
 	![Screenshot 016 - JSON property naming][16]
 	
 	Because naming has to match exactly we need to append an attribute to the Id property in this class. To do this we again need to reference the Newtonsoft.Json library.
@@ -206,7 +209,7 @@ The Cosmos DB **Query Explorer** enables you to create, edit, and run queries ag
 	```C#
 	using Newtonsoft.Json;
 
-	namespace AzureCosmos DBConsole
+	namespace AzureCosmosDbConsole
 	{
 		public class Product
 		{
@@ -228,21 +231,21 @@ The Cosmos DB **Query Explorer** enables you to create, edit, and run queries ag
 
 
 11. Now switch back to the Program.cs class.
->For this example application we create a few private properties for the sake of simplicity. Please never do this in a real world situation.
+>For this example application we create a few private properties for the sake of simplicity. **Please never do this in a real world situation!!**
 
-12. Within the Program class right before the Main function we create a couple of private properties containing our essential Cosmos DB information.
-      1. A private const *string* **DatabaseName** which you can set to the name of your database (which you can find in you Azure Portal)
+12. Within the **Program** class right before the **Main** function we create a couple of private properties containing our essential CosmosDB information.
+      1. A private const *string* **DatabaseName** which you can set to the name of your database (AzureBootcamp2018) (which you can find in you Azure Portal)
       2. A private const *string* **CollectionName** containing the collectionname.
-			      ![Screenshot 018 - Cosmos DB essentials][18]
 
       3. A private const *string* **EndpointUri** directing to your Cosmos DB endpoint which can be found under the 'Keys' tab in the Azure environment (as described in the [import Json](#import-json) chapter)
       4. A private const *string* **PrimaryKey** containing the PrimaryKey of the Cosmos DB endpoint.
       5. A private *DocumentClient* **documentClient** which the 'Microsoft.Azure.Documents.Client' library (which is already added when we downloaded the Cosmos DB Nuget package)
 
 	The code should look something like this obviously depending on how you named your database and you collection in Azure.
-	![Screenshot 017 - Cosmos DB essentials][17]
+	![Screenshot 017 - CosmosDB essentials][17]
+	![Screenshot 018 - CosmosDB database and collections][18]
 
-Now to a bit more complicated stuff. By default the query can be executed synchronously. But we don't want to hang our application, even if it's a demo application it's better to always work with a asynchronous pattern so you interface is always responding to input.
+Now to a bit more complicated stuff. By default the query can be executed synchronously. But we don't want to hang our application, even if it's a demo application it's better to always work with an asynchronous pattern so your interface always responds to input.
 We create a simple async handler to our query input.
 
 13. Within the Program.cs write the following function.
@@ -272,28 +275,34 @@ We create a simple async handler to our query input.
     {
         var queryUri = UriFactory.CreateDocumentCollectionUri(DatabaseName, CollectionName);
         
-        var query = documentClient.CreateDocumentQuery<Product>(queryUri)
+        var query = _documentClient.CreateDocumentQuery<Product>(queryUri)
             .Where(p => p.ProductNumber == "FR-R92R-58");
 
         return QueryAsync(query);
     }
 	```
-	a. In the first line we instantiate the queryUri by using the UriFactory's CreateDocumentCollectionUri. The UriFactory can be found in the 'Microsoft.Azure.Documents.Client' library which is included with the nuget Cosmos DB nuget package we downloaded earlier.
+	a. In the first line we instantiate the queryUri by using the UriFactory's CreateDocumentCollectionUri. The UriFactory can be found in the 'Microsoft.Azure.Documents.Client' library which is included with the nuget CosmosDB nuget package we downloaded earlier.
 	Here you set the databasename and the collection you want to query. 
-    b. Next we create the final query we want to execute based on the queryUri. For this example we request a specific product with the productnumber being: 'FR-R9R-58'. We can use Linq expressions in this query build.
+    
+	b. Next we create the final query we want to execute based on the queryUri. For this example we request a specific product with the productnumber being: 'FR-R9R-58'. We can use Linq expressions in this query build.
+   
     c. Finally we send the query to the QueryAsync function we created in the previous step and return the Task object.
 
-15. Next step is to connect to the Cosmos DB client and to invoke the query.
-    a. Create a private, async function returning a Task object and name the function Start.
-    b. Set the *documentClient* by creating a new DocumentClient() object using the static EndpointUri and PrimaryKey which we defined at the top of our application.
-    c. Call and await the ExecuteProductQueryAsync() function. Save the result values in a variable named 'result'.
+15. Next step is to connect to the CosmosDB client and to invoke the query.
+    
+	a. Create a private, async function returning a Task object and name the function Start.
+    
+	b. Set the *documentClient* by creating a new DocumentClient() object using the static EndpointUri and PrimaryKey which we defined at the top of our application.
+    
+	c. Call and await the ExecuteProductQueryAsync() function. Save the result values in a variable named 'result'.
+   
     d. Then iterate over the result collection and for each item within the resultset create a Console.WriteLine to show the result in the Console.
     
 	The Start() function should look something like this:
 	```C#
         private async Task Start()
         {
-            documentClient = new DocumentClient(new Uri(EndpointUri), PrimaryKey);
+            _documentClient = new DocumentClient(new Uri(EndpointUri), PrimaryKey);
             var result = await ExecuteProductQueryAsync();
 
             foreach (var product in result)
@@ -333,7 +342,7 @@ We create a simple async handler to our query input.
     
 18. Luckily we have Linq in place so we can easily adjust the query to do so:
 	```C#
-	var query = documentClient.CreateDocumentQuery<Product>(queryUri)
+	var query = _documentClient.CreateDocumentQuery<Product>(queryUri)
                 .Where(p => p.ProductNumber.StartsWith("FR"))
                 .Where(p => p.Category.Name.StartsWith("Mountain"));
 	```
@@ -346,7 +355,7 @@ We create a simple async handler to our query input.
 21. To workaround this issue you can use the *FeedOptions* and set the **EnableScanInQuery** option to **true**.
     ```C#
 		var feedOptions = new FeedOptions { EnableScanInQuery = true };
-		var query = documentClient.CreateDocumentQuery<Product>(queryUri, feedOptions)
+		var query = _documentClient.CreateDocumentQuery<Product>(queryUri, feedOptions)
 			.Where(p => p.ProductNumber.StartsWith("FR"))
 			.Where(p => p.Category.Name.StartsWith("Mountain"));
 	```
@@ -357,9 +366,9 @@ We create a simple async handler to our query input.
 
 
 ## Summary
-By completing this lab you have learned how to get started with Azure Cosmos DB. 
+By completing this lab you have learned how to get started with Azure CosmosDB. 
 This includes creating a new account, importing data, running queries, and executing a query via a console application. 
-For more information, please check out [CosmosDB.com](http://www.CosmosDB.com)
+For more information, please check out [cosmosdb.com](http://www.cosmosdb.com)
 
 <!--Image references-->
 [1]: media/001_New_Databases_NoSQL.png
