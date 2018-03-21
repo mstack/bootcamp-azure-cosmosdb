@@ -53,9 +53,9 @@ The Cosmos DB Data Migration tool is an open source solution that imports data t
 
 While the import tool includes a graphical user interface (dtui.exe), it can also be driven from the command line (dt.exe).  In fact, there is an option to output the associated command after setting up an import through the UI.  Tabular source data (e.g. SQL Server or CSV files) can be transformed such that hierarchical relationships (subdocuments) can be created during import.
 
-The migration tool is open source and can be found on GitHub in [this repository](https://github.com/azure/azure-documentDB-datamigrationtool) 
-An older version of the tool (a pre-compiled exe) can also be downloaden from:
+The migration tool is open source and its source code can be found on GitHub in [this repository](https://github.com/azure/azure-documentDB-datamigrationtool) However before you can use that you need to build en publish it. For the sake of this workshop you can also download an older  version of the tool (a pre-compiled exe) from:
 https://www.microsoft.com/en-us/download/details.aspx?id=46436
+You can run this tool directly without installing it.
 
 
 <a name="import-json"></a>
@@ -69,7 +69,7 @@ The JSON file source importer option allows you to import one or more single doc
 6.	On the **Source Information** screen, select the **JSON file(s)** option from the **Import from** drop-down menu.
 7.	Click **Add Files** and select to the sample JSON data set you downloaded in step 1. Click **Next** to proceed.
  ![Screen shot 007 Import JSON][7]
-8.	On the **Target Information** screen, you will see a number of export target options. Select the **Cosmos DB - Bulk import** option. *This allows you to import to a Cosmos DB using a stored procedure for efficiency.  The tool will create, execute, and then delete the stored procedure from the target collection.**
+8.	On the **Target Information** screen, you will see a number of export target options. Select the **DocumentDB - Bulk import** option. *This allows you to import data to a n Azure Cosmos DB. As this is an older import tool it still says 'DocumentDB' but that doesn't matter for its functionality **
 ![Screen shot 008 Import JSON][8]
 9.	Switch to the **Azure Portal** and navigate to the **Keys menu** for your Cosmos DB account. 
 10. Copy the **Primary Connection String** (this also contains the *Primary Key*)
@@ -86,7 +86,7 @@ The JSON file source importer option allows you to import one or more single doc
 
 	![Screen shot 010 Import JSON - Database name and Verify][10]
 
-13. Next, enter the name of the *Collection* to which the data will be imported. For example: *Products*
+13. Next, enter the name of the *Collection* to which the data will be imported. For example: *Products* and click 'Add' to add the collection to the list.
 14. Click **Next** to proceed to the 'Advanced' page. Click **Next** again to proceed to the *Summary*.
     > You can leave the *Partition Key* and *Id Field* blank. The default value of 1000 for *Collection Throughput* can be left as is.
 
@@ -96,6 +96,8 @@ The JSON file source importer option allows you to import one or more single doc
 	![Screenshot 011 - Summary][11]
 
 16. Once you are satisfied, click **Import**. Importing takes a rough 5 seconds. When completed you can close the *Cosmos DB Data Migration Tool*.
+
+
 17. In the Azure Portal you can now find your database under *Collections/Browse*
 		
 	![Screenshot 012 - Collections/Browse][12]
@@ -357,7 +359,7 @@ We create a simple async handler to our query input.
 ## Summary
 By completing this lab you have learned how to get started with Azure Cosmos DB. 
 This includes creating a new account, importing data, running queries, and executing a query via a console application. 
-For more information, please check out [Cosmos DB.com](http://www.Cosmos DB.com)
+For more information, please check out [CosmosDB.com](http://www.CosmosDB.com)
 
 <!--Image references-->
 [1]: media/001_New_Databases_NoSQL.png
